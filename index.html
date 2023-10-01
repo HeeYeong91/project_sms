@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+  <script type="module" defer src="./js/app.js"></script>
+  <style>
+    td {
+      position: relative;
+    }
+    i {
+      position: absolute; 
+      top: 15px;
+    }
+  </style>
+  <title>HY 초등학교 성적 관리</title>
+  <!-- (2023-06-27) -->
+</head>
+
+<body class="m-0 p-0 bg-light">
+  <!-- 타이틀 -->
+  <div class="p-5 text-center">
+    <h1>HY 초등학교 성적 관리</h1>
+  </div>
+  <!-- 메인 컨테이너 -->
+  <div class="container p-5 mb-5 border shadow bg-white">
+    <!-- 입력 컨테이너 -->
+    <form action="#" name="inputForm">
+      <div class="mb-5 row justify-content-around">
+        <!-- 학번 입력 -->
+        <div class="col-md-12 col-lg-2 ps-0">
+          <div class="input-group">
+            <div class="input-group-text">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+            <input type="number" class="form-control" id='ssn' placeholder="학번" name="ssn" />
+          </div>
+        </div>
+        <!-- 이름 입력 -->
+        <div class='col-md-12 col-lg-2'>
+          <div class="input-group">
+            <div class="input-group-text">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+            <input type="text" class="form-control" id='name' placeholder="이름" name="name" />
+          </div>
+        </div>
+        <!-- 국어점수 -->
+        <div class='col-md-12 col-lg-2'>
+          <div class="input-group">
+            <div class="input-group-text" id="basic-addon3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+            <input type="number" class="form-control" id='korean' placeholder="국어점수" name="korean" />
+          </div>
+        </div>
+        <!-- 영어점수 -->
+        <div class='col-md-12 col-lg-2'>
+          <div class="input-group">
+            <div class="input-group-text" id="basic-addon4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+            <input type="number" class="form-control" id='english' placeholder="영어점수" name="english" />
+          </div>
+        </div>
+        <!-- 수학점수 -->
+        <div class='col-md-12 col-lg-2'>
+          <div class="input-group">
+            <div class="input-group-text" id="basic-addon5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+            <input type="number" class="form-control" id='math' placeholder="수학점수" name="math" />
+          </div>
+        </div>
+        <div class='col-auto pe-0'>
+          <button type="button" class="btn btn-primary" id="addBtn">등록</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- 검색 컨테이너 -->
+    <div class="row justify-content-between mb-5">
+
+      <!-- 검색 및 삭제 -->
+      <form action="#" class="row col-auto" name="searchForm">
+        <div class="col-auto">
+          <select class="form-select" id="searchSelect" name="searchSelect">
+            <option value="">전체</option>
+            <option value="ssn">학번</option>
+            <option value="name">이름</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" placeholder="검색어" id="search" name="search" />
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-primary" id="searchBtn">검색</button>
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-primary" id="deleteBtn">삭제</button>
+        </div>
+      </form>
+
+      <!-- 정렬방식 -->
+      <form class="row col-auto">
+        <div class="col-auto align-self-center">
+          <label for="choice">정렬방식</label>
+        </div>
+        <div class="col-auto">
+          <select class="form-select" id="sortSelect" name="sortSelect">
+            <option value="">기본</option>
+            <option value="avgSort">성적순</option>
+            <option value="nameSort">이름순</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <!-- 테이블 -->
+    <table class="table table-hover text-center">
+      <thead class='table-primary'>
+        <tr>
+          <th>학번</th>
+          <th>이름</th>
+          <th>국어</th>
+          <th>영어</th>
+          <th>수학</th>
+          <th>총점</th>
+          <th>평균</th>
+          <th>순위</th>
+        </tr>
+      </thead>
+      <tbody class="table-body">
+      </tbody>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
