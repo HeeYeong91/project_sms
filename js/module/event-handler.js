@@ -5,16 +5,25 @@ import { Validator } from "../util/validator.js";
 // 이벤트 처리를 객체화 (2023-06-29 ~ 30)
 class EventHandler {
 
-  constructor() { }
+  constructor() {}
 
   // 이벤트 소스에 이벤트핸들러 등록
   eventRegist() {
     window.addEventListener('load', e => {
-      const students = studentRepository.getStudents();
-      students.forEach((student) => {
-        this.addRank(e);
-        this.addRow(student);
-      });
+      const list = this.readLocalStorage();
+      if (list != undefined) {
+        list.forEach(student => {
+          // if (studentRepository.findBySsn(student.ssn) == undefined) {
+          studentRepository.addStudent(new Student(student.ssn, student.name, student.korean, student.english, student.math));
+          // }
+        });
+        const students = studentRepository.getStudents();
+        this.addRank(students);
+
+        students.forEach((student) => {
+          this.addRow(student);
+        });
+      };
     });
 
     // 등록 버튼
@@ -80,14 +89,18 @@ class EventHandler {
     });
   }
 
-  // 학생 등록
+  /**
+   * 학생 등록
+   * @입력받은값 학번(string), 이름(string), 국어점수(string), 영어점수(string), 수학점수(string)
+   * repository에 등록, rank추가, 테이블 행추가, localStorage 갱신
+   */
   addStudent() {
     const ssn = document.inputForm.ssn.value;
     const name = document.inputForm.name.value;
     const korean = document.inputForm.korean.value;
     const english = document.inputForm.english.value;
     const math = document.inputForm.math.value;
-    const inputStudent = studentRepository.findBySsn(Number(ssn))
+    const inputStudent = studentRepository.findBySsn(Number(ssn));
 
     // 유효성 검증 후 등록
     if (!Validator.hasText(ssn)) {
@@ -116,18 +129,19 @@ class EventHandler {
       const student = new Student(Number(ssn), name, Number(korean), Number(english), Number(math));
       studentRepository.addStudent(student);
 
-      // student에 순위 추가
-      this.addRank();
-
       const tbody = document.querySelector('.table-body');
       tbody.innerHTML = '';
 
-      // 입력 받은 student 테이블 행 추가
+      // students 학번으로 정렬
       const students = studentRepository.findAllBySort((student1, student2) => student1.ssn - student2.ssn);
+      // 학생 순위 추가
+      this.addRank(students);
+      // 행 추가
       students.forEach(student => {
         this.addRow(student);
       });
-
+      // 학생목록 LocalStorage에 갱신
+      this.addLocalStorage(students);
       // input 입력 값 초기화
       document.inputForm.ssn.value = '';
       document.inputForm.name.value = '';
@@ -137,7 +151,11 @@ class EventHandler {
     };
   }
 
-  // 학번으로 학생 검색
+  /**
+   * 학번으로 학생 검색 기능
+   * @입력받은값 학번(string) -> number로 변환 후 사용
+   * @return 정상 : 해당 학생 찾아서 테이블 갱신, 비정상 : Alert 실행
+   */
   findBySsn() {
     const searchInput = document.searchForm.search.value;
     const student = studentRepository.findBySsn(Number(searchInput));
@@ -151,7 +169,11 @@ class EventHandler {
     };
   }
 
-  // 이름으로 학생 검색
+  /**
+   * 이름으로 학생 검색
+   * @입력받은값 이름(string)
+   * @return 정상 : 해당 학생 목록 찾아서 테이블 갱신, 비정상 : Alert 실행
+   */
   findByName() {
     const searchInput = document.searchForm.search.value;
     const students = studentRepository.findByName(searchInput);
@@ -168,7 +190,13 @@ class EventHandler {
     };
   }
 
-  // 학번으로 학생 삭제
+  // 
+
+  /**
+   * 학번으로 학생 삭제
+   * @입력받은값 학번(string) -> (number)로 변환 후 사용
+   * @return 정상 : 학생 삭제 후 테이블 갱신, 비정상 : Alert 실행
+   */
   removeByssn() {
     const searchInput = document.searchForm.search.value;
     const students = studentRepository.getStudents();
@@ -195,20 +223,48 @@ class EventHandler {
             `${Number(searchInput)}번 학생이 삭제되었습니다.`,
             'success'
           );
-
           studentRepository.removeBySsn(Number(searchInput));
           tbody.innerHTML = '';
-          this.addRank();
+          console.log(students);
+          this.addRank(students);
           students.forEach(student => {
             this.addRow(student);
           });
+          // 삭제 후 학생 목록 localStorage에 갱신
+          this.addLocalStorage(students);
+          console.log(this.readLocalStorage());
           document.searchForm.search.value = '';
         };
       });
     };
   }
 
-  // alert 생성
+  /**
+   * localStorage 저장
+   * @param 학생 목록 객체
+   * @return localStorage.students에 저장
+   */
+  addLocalStorage(students) {
+    const studentsJson = JSON.stringify(students);
+    localStorage.students = studentsJson;
+  }
+
+  /**
+   * localStorage 읽기
+   * @return localStorage.students에 객체가 있으면 객체 리턴
+   */
+  readLocalStorage() {
+    if (localStorage.students) {
+      const students = JSON.parse(localStorage.students);
+      return students;
+    };
+  }
+
+  /**
+   * alert 생성
+   * @param {string} 에러 출력 메세지
+   * @param {fn} 포커스 함수
+   */
   addAlert(str, focus) {
     Swal.fire({
       icon: 'error',
@@ -220,9 +276,12 @@ class EventHandler {
     });
   }
 
-  // 등수 추가
-  addRank() {
-    const students = studentRepository.getStudents();
+  /**
+   * 등수 추가
+   * @param {obj} students
+   * 평균을 비교해서 student에 rank 할당
+   */
+  addRank(students) {
     students.forEach(student => student.rank = 1);
     for (let i = 0; i < students.length; i++) {
       for (let j = 0; j < students.length; j++) {
@@ -233,15 +292,17 @@ class EventHandler {
     };
   }
 
-  // 테이블 행 추가
+  /**
+   * 테이블 행 추가
+   * @param {obj} student 
+   * student 입력받아 동적으로 테이블에 행 추가
+   */
   addRow(student) {
     const tbody = document.querySelector('.table-body');
     const tr = document.createElement('tr');
-
     tbody.appendChild(tr);
     if (student.rank === 1) {
-      tr.innerHTML =
-        `<td>${student.ssn}</td>
+      tr.innerHTML = `<td>${student.ssn}</td>
     <td>${student.name}</td>
     <td>${student.korean}</td>
     <td>${student.english}</td>
@@ -250,8 +311,7 @@ class EventHandler {
     <td>${student.getAvg().toFixed(2)}</td>
     <td style="color: red; font-weight: bold;">${student.rank}등<i class="fa-solid fa-crown fa-bounce fa-sm" style="color: #ff0000;"></i></td>`
     } else {
-      tr.innerHTML =
-        `<td>${student.ssn}</td>
+      tr.innerHTML = `<td>${student.ssn}</td>
     <td>${student.name}</td>
     <td>${student.korean}</td>
     <td>${student.english}</td>
